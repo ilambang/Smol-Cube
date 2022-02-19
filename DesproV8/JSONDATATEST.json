@@ -1,0 +1,21 @@
+{
+    "action": "off",
+    "action_TV": "on",
+    "action_AC": "off",
+    "TV_Brand": "1",
+    "AC_Brand": "1",
+    "HEX_TV": "20DF10EF",
+    "HEX_AC": "88C0051",
+    "itter": 2,
+    "schedule": [
+        "'false'",
+        "'TV'",
+        "'1'",
+        "'10:30:00'",
+        "'true'",
+        "'TV'",
+        "'1'",
+        "'14:30'"
+    ],
+    "thingname": ""
+}

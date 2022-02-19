@@ -1,0 +1,1 @@
+db_jadwal = {"schedule": [false, "TV", 1, "11:32", true, "TV", 1, "16:06", false, "AC", 1, "10:30:00", true, "Lamp", 0, "19:30:00"]}

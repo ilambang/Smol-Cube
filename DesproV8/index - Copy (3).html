@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="keywords" content="Control, Pricing Table Template">
+  <meta name="description" content="">
+  <meta name="page_type" content="np-template-header-footer-from-plugin">
+  <title>Home</title>
+  <link rel="stylesheet" href="nicepage.css" media="screen">
+  <link rel="stylesheet" href="Home.css" media="screen">
+
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+  <script type = "text/javascript"
+       src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+  </script>
+  <meta name="generator" content="Nicepage 4.0.3, nicepage.com">
+
+  <link id="u-theme-google-font" rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+
+
+
+  <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": "",
+		"logo": "images/default-logo.png"
+    }</script>
+
+
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="Home">
+  <meta property="og:type" content="website">
+
+  <script type="text/javascript">
+    $(window).load(function() {
+    });
+      $(document).ready(function() {
+         $("#bulb_switch").change(function(event){
+            currentvalue = document.getElementById("bulb_switch").checked;
+			if(document.getElementById("TV_switch").checked){
+				var currentvalue_TV = "on";
+			}
+			else{
+				var currentvalue_TV = "off";
+			}
+			if(document.getElementById("AC_switch").checked){
+				var currentvalue_AC = "on";
+			}
+			else{
+				var currentvalue_AC = "off";
+			}
+			
+			//UNTUK PEMBACAAN TABLE Schedule
+			var myTab = document.getElementById('empTable');
+			var toogle_bulb = document.getElementById('bulb_switch');
+			var toogle_TV = document.getElementById('TV_switch');
+			var toogle_AC = document.getElementById('AC_switch');
+
+			var arrValues = new Array();
+			//arrValues.push("'" + toogle_bulb.checked + "'");
+			//arrValues.push("'" + toogle_TV.checked + "'");
+			//arrValues.push("'" + toogle_AC.checked + "'");
+			// loop through each row of the table.
+			for (row = 1; row < myTab.rows.length - 1; row++) {
+			  // loop through each cell in a row.
+			  for (c = 0; c < myTab.rows[row].cells.length; c++) {
+				var element = myTab.rows.item(row).cells[c];
+				if (element.childNodes[0].getAttribute('type') == 'text') {
+				  arrValues.push("'" + element.childNodes[0].value + "'");
+				  //alert('true');
+				}
+				//element.childNodes[0].getAttribute('type') == 'button'
+				else if (c == 0) {
+				  // else if (element.childNodes[0].childNodes[0].getAttribute('type')=='checkbox'){
+				  // alert(element.childNodes[0].childNodes[0].checked)
+				  arrValues.push("'" + element.childNodes[0].childNodes[0].checked + "'");
+				  // if (element.childNodes[0].checked == true){
+				  //   arrValues.push("'" + 'true' + "'");
+				  // }
+				  // else{
+				  //   alert('child :'+element.childNodes[0].checked);
+				  //   arrValues.push("'" + element.childNodes[0].checked + "'");
+				  // } 
+				}
+				else if (c == 1) {
+				  arrValues.push("'" + element.childNodes[0].childNodes[0].value + "'");
+				}
+				else if (c == 2) {
+				  arrValues.push("'" + element.childNodes[0].value + "'");
+				}
+				// else{
+				//   alert(element.childNodes[0].getAttribute('type'))
+				// }
+			  }
+			}
+			//SELESAI PEMBACAAN TABLE SCHEDULE
+            //console.log('jQuery='+document.getElementById("bulb_switch").checked);
+            if(currentvalue == true){
+                    // trying to add the value from text box 
+                    thingName = document.getElementById("txtField").value;
+                    console.log(thingName);
+                    var mydata={"action":"on","action_TV":"on", "thingname":thingName};
+                    console.log(mydata);
+					var testdata={"action":"on","action_TV":currentvalue_TV,"action_AC":currentvalue_AC,"itter":(myTab.rows.length- 1)/2 ,"schedule":arrValues, "thingname":thingName};
+					console.log(testdata);
+                    // document.getElementById("onoff").innerHTML="It's On";
+                    // document.getElementById("onoff").setAttribute("class","button is-rounded is-large is-fullwidth is-loading");
+                      $.ajax( {
+                        type: 'POST',
+                         url:'https://7rebmz893d.execute-api.ap-southeast-1.amazonaws.com/Dev/shadow-state',
+                         contentType: 'application/json',
+                         crossDomain: true,
+                         processData: false,
+                         dataType: "json",
+                         data: JSON.stringify(mydata),
+                         success:function(data) {
+                           console.log(" on success");
+                           document.getElementById("bulb_switch").checked = true;
+                           document.getElementById("bulb_switch_status").innerHTML='On';
+                            // document.getElementById("onoff").setAttribute("class","button is-success is-rounded is-large is-fullwidth");
+                         },
+                         error:function(data) {
+                          document.getElementById("bulb_switch").checked = false;
+                          document.getElementById("bulb_switch_status").innerHTML='Error';
+                           console.log(" on fail;");
+                            // document.getElementById("onoff").setAttribute("class","button is-success is-rounded is-large is-fullwidth");
+                         }
+                      });
+            }
+            else {
+                // document.getElementById("onoff").innerHTML="It's Off";
+                // trying to add the value from text box 
+                thingName = document.getElementById("txtField").value;
+                console.log(thingName);
+                var mydata={"action":"off","action_TV":"off", "thingname":thingName};
+                console.log(mydata);
+				var testdata={"action":"off","action_TV":currentvalue_TV,"action_AC":currentvalue_AC,"itter":(myTab.rows.length- 1)/2 ,"schedule":arrValues, "thingname":thingName};
+				console.log(testdata);
+                // document.getElementById("onoff").innerHTML="It's Off";
+                // document.getElementById("onoff").setAttribute("class","button is-rounded is-large is-fullwidth is-loading");
+                  $.ajax( {
+                    type: 'POST',
+                     url:'https://7rebmz893d.execute-api.ap-southeast-1.amazonaws.com/Dev/shadow-state',
+                     contentType: 'application/json',
+                     crossDomain: true,
+                     processData: false,
+                     dataType: "json",
+                     data: JSON.stringify(mydata),
+                     success:function(data) {
+                       console.log(" off success");
+                       document.getElementById("bulb_switch").checked = false;
+                       document.getElementById("bulb_switch_status").innerHTML='Off';
+                        // document.getElementById("onoff").setAttribute("class","button is-danger is-rounded is-large is-fullwidth");
+                     },
+                     error:function(data) {
+                       console.log(" off fail");
+                       document.getElementById("bulb_switch").checked = true;
+                       document.getElementById("bulb_switch_status").innerHTML='Error';
+                        // document.getElementById("onoff").setAttribute("class","button is-danger is-rounded is-large is-fullwidth");
+                     }
+                  });
+            }
+         });
+         $("#fndbtn").click(function(event){
+            console.log("testing the button");
+            //check the status of Shadow
+            // thingName = "ESP32"
+            thingName = document.getElementById("txtField").value;
+            console.log(`thingname=${thingName}`);
+			var myTab = document.getElementById('empTable');
+			console.log((myTab.rows.length- 1)/2);
+			
+            $.ajax( {
+              type: 'GET',
+               url:'https://7rebmz893d.execute-api.ap-southeast-1.amazonaws.com/Dev/shadow-state',
+               contentType: 'application/json',
+               crossDomain: true,
+               processData: false,
+               dataType: "json",
+               data: `thingname=${thingName}`,
+               success:function(data) {
+                console.log("success");
+                console.log(data.status);
+                console.log(data.status_TV);
+                document.getElementById("txtField").style.backgroundColor='rgba(0, 255, 0, 0.3)';
+                if (data.status == "It's On" )
+                {
+                  document.getElementById("bulb_switch").checked = true;
+                  document.getElementById("bulb_switch_status").innerHTML='On';
+                }
+                else if(data.status == "Device Shadow State Error" ){
+                  document.getElementById("txtField").style.backgroundColor='rgba(255, 0, 0, 0.3)';
+                }
+                else{
+                  document.getElementById("bulb_switch").checked = false;
+                  document.getElementById("bulb_switch_status").innerHTML='Off';
+                }
+               },
+               error:function(data) {
+                 console.log("error");
+                 document.getElementById("txtField").style.backgroundColor='rgba(255, 0, 0, 0.3)';
+               }
+            });
+        });
+      });
+ 
+</script>
+</head>
+
+<body onload="createTable()" data-home-page="Home.html" data-home-page-title="Home" class="u-body">
+  <header class="u-clearfix u-header u-header" id="sec-33fa">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <nav class="u-menu u-menu-dropdown u-offcanvas u-menu-1">
+        <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px;">
+          <a class="u-button-style u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-top-bottom-menu-spacing u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+            href="#">
+            <svg>
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#menu-hamburger"></use>
+            </svg>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <defs>
+                <symbol id="menu-hamburger" viewBox="0 0 16 16" style="width: 16px; height: 16px;">
+                  <rect y="1" width="16" height="2"></rect>
+                  <rect y="7" width="16" height="2"></rect>
+                  <rect y="13" width="16" height="2"></rect>
+                </symbol>
+              </defs>
+            </svg>
+          </a>
+        </div>
+        <div class="u-nav-container">
+          <ul class="u-nav u-unstyled u-nav-1">
+            <li class="u-nav-item"><a
+                class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                href="Home.html" style="padding: 10px 20px;">Home</a>
+            </li>
+            <li class="u-nav-item"><a
+                class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                href="Page-1.html" style="padding: 10px 20px;">Page 1</a>
+            </li>
+          </ul>
+        </div>
+        <div class="u-nav-container-collapse">
+          <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+            <div class="u-inner-container-layout u-sidenav-overflow">
+              <div class="u-menu-close"></div>
+              <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
+                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Home.html">Home</a>
+                </li>
+                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Page-1.html">Page 1</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+        </div>
+      </nav>
+      <a href="https://nicepage.com" class="u-image u-logo u-image-1">
+        <img src="iconcube-web-02.png" class="u-logo-image u-logo-image-1">
+        <!-- Kalo mau insert gambar logo disini
+            <img src="images/default-logo.png" class="u-logo-image u-logo-image-1">
+          -->
+      </a>
+    </div>
+  </header>
+  <section class="u-clearfix u-section-1" id="sec-9bdf">
+    <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+      <div class="u-align-left u-expanded-width u-left-0 u-shape u-shape-rectangle u-shape-1"></div>
+      <div class="u-clearfix u-layout-wrap u-layout-wrap-1">
+        <div class="u-layout">
+          <div class="u-layout-row">
+            <div class="u-align-center-sm u-align-center-xs u-align-left-lg u-align-left-md u-align-left-xl u-container-style u-layout-cell u-left-cell u-size-43 u-layout-cell-1">
+              <div class="u-container-layout u-valign-middle u-container-layout-1">
+                <h3 class="u-text u-text-default u-text-1 ">Input Device Name</h3>
+                <p class="u-text u-text-2 ">
+                  <input name="txtField" type="text" maxlength="512" id="txtField" class="u-radius-25 searchField u-align-center-sm u-align-center-xs u-align-left-lg u-align-left-md u-align-left-xl" style="padding: 8px;" />
+                  &nbsp
+                  <!--Sample text. Click to select the text box. Click again or double click to start editing the text.-->
+                </p>
+              </div>
+            </div>
+            <div class="u-align-left u-container-style u-layout-cell u-right-cell u-size-17 u-layout-cell-2">
+              <div class="u-container-layout u-valign-middle u-container-layout-2">
+                <a href="#" class="u-black u-btn u-button-style u-btn-1" id = "fndbtn">Confirm</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="u-clearfix u-section-2" id="sec-3169">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <h2 class="u-align-center u-text u-text-default u-text-1">Control</h2>
+      <p class="u-align-center u-text u-text-2">Control your device directly using this button.</p>
+      <div class="u-expanded-width u-list u-list-1">
+        <div class="u-repeater u-repeater-1">
+          <div
+            class="u-radius-25 u-align-center u-container-style u-list-item u-repeater-item u-shape-rectangle u-list-item-1">
+            <div class="u-container-layout u-similar-container u-container-layout-1"><span
+                class="u-icon u-icon-circle u-icon-1"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice"
+                  viewBox="0 0 32 32">
+                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-32ac"></use>
+                </svg><svg class="u-svg-content" viewBox="0 0 32 32" id="svg-32ac">
+                  <g id="bulb">
+                    <path
+                      d="M16,0C9.924,0,5,4.924,5,11c0,4.031,3.688,8.303,5.031,12.055C12.034,28.65,11.812,32,16,32   c4.25,0,3.965-3.334,5.969-8.922C23.316,19.318,27,15,27,11C27,4.924,22.074,0,16,0z M18.592,27.176l-4.958,0.619   c-0.177-0.512-0.367-1.111-0.598-1.893c-0.003-0.01-0.007-0.021-0.009-0.031l6.188-0.773c-0.088,0.295-0.182,0.605-0.264,0.883   C18.82,26.43,18.703,26.82,18.592,27.176z M12.736,24.908c-0.182-0.602-0.387-1.236-0.615-1.908h7.766   c-0.123,0.359-0.246,0.719-0.352,1.059L12.736,24.908z M16,30c-1.013,0-1.479-0.117-1.997-1.25l4.238-0.531   C17.627,29.873,17.18,30,16,30z M20.672,21h-9.333c-0.498-1.08-1.096-2.16-1.686-3.217C8.348,15.448,7,13.033,7,11   c0-4.963,4.037-9,9-9c4.963,0,9,4.037,9,9c0,2.018-1.35,4.446-2.656,6.795C21.76,18.848,21.166,19.926,20.672,21z"
+                      fill="currentColor"></path>
+                    <path
+                      d="M16,5c-3.309,0-6,2.691-6,6c0,0.276,0.224,0.5,0.5,0.5S11,11.276,11,11c0-2.757,2.243-5,5-5   c0.276,0,0.5-0.224,0.5-0.5S16.275,5,16,5z"
+                      fill="currentColor"></path>
+                  </g>
+                </svg>
+
+
+              </span>
+              <h3 class="u-text u-text-default u-text-3">Bulb</h3>
+              <div class="switch u-align-center u-clearfix u-custom-html u-custom-html-1">
+                <style>
+                  .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 60px;
+                    height: 34px;
+                  }
+
+                  .switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                  }
+
+                  .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    -webkit-transition: .4s;
+                    transition: .4s;
+                  }
+
+                  .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 26px;
+                    width: 26px;
+                    left: 4px;
+                    bottom: 4px;
+                    background-color: white;
+                    -webkit-transition: .4s;
+                    transition: .4s;
+                  }
+
+                  input:checked+.slider {
+                    background-color: #2196F3;
+                  }
+
+                  input:focus+.slider {
+                    box-shadow: 0 0 1px #2196F3;
+                  }
+
+                  input:checked+.slider:before {
+                    -webkit-transform: translateX(26px);
+                    -ms-transform: translateX(26px);
+                    transform: translateX(26px);
+                  }
+
+                  /* Rounded sliders */
+                  .slider.round {
+                    border-radius: 34px;
+                  }
+
+                  .slider.round:before {
+                    border-radius: 50%;
+                  }
+                </style>
+                <label class="switch">
+                  <input type="checkbox" id="bulb_switch" onchange="updateButton(this)">
+                  <span class="round slider"></span>
+                </label>
+              </div>
+              <p class="u-text u-text-4" id="bulb_switch_status">Off</p>
+            </div>
+          </div>
+          <div
+            class="u-radius-25 u-align-center u-container-style u-list-item u-repeater-item u-shape-rectangle u-list-item-2">
+            <div class="u-container-layout u-similar-container u-container-layout-2"><span
+                class="u-icon u-icon-circle u-icon-2"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice"
+                  viewBox="0 0 64 64">
+                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-1e0f"></use>
+                </svg><svg class="u-svg-content" viewBox="0 0 64 64" id="svg-1e0f"
+                  style="enable-background:new 0 0 64 64;">
+                  <g>
+                    <path
+                      d="M39,23H7c-1.103,0-2,0.897-2,2v28c0,1.103,0.897,2,2,2h32c1.103,0,2-0.897,2-2V25C41,23.897,40.103,23,39,23z M7,53V25h32   l0.001,28H7z">
+                    </path>
+                    <path
+                      d="M48,29c1.654,0,3-1.346,3-3s-1.346-3-3-3s-3,1.346-3,3S46.346,29,48,29z M48,25c0.552,0,1,0.449,1,1s-0.448,1-1,1   s-1-0.449-1-1S47.448,25,48,25z">
+                    </path>
+                    <path
+                      d="M56,23c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S57.654,23,56,23z M56,27c-0.552,0-1-0.449-1-1s0.448-1,1-1   s1,0.449,1,1S56.552,27,56,27z">
+                    </path>
+                    <path
+                      d="M47,36c0,2.757,2.243,5,5,5s5-2.243,5-5s-2.243-5-5-5S47,33.243,47,36z M52,33c1.654,0,3,1.346,3,3   c0,1.302-0.839,2.402-2,2.816V35h-2v3.816c-1.161-0.414-2-1.514-2-2.816C49,34.346,50.346,33,52,33z">
+                    </path>
+                    <path d="M43,55h16V43H43V55z M45,45h12v8H45V45z"></path>
+                    <rect height="2" width="2" x="43" y="39"></rect>
+                    <rect height="2" width="2" x="43" y="35"></rect>
+                    <rect height="2" width="2" x="43" y="31"></rect>
+                    <path
+                      d="M58,19H35.162L45.641,6.659C46.051,6.87,46.508,7,47,7c1.654,0,3-1.346,3-3s-1.346-3-3-3s-3,1.346-3,3   c0,0.427,0.093,0.832,0.255,1.201L32.537,19h-1.074L19.744,5.203C19.907,4.834,20,4.428,20,4c0-1.654-1.346-3-3-3s-3,1.346-3,3   s1.346,3,3,3c0.491,0,0.949-0.13,1.358-0.34L28.839,19H6c-2.757,0-5,2.243-5,5v30c0,2.757,2.243,5,5,5h1v1c0,1.654,1.346,3,3,3h44   c1.654,0,3-1.346,3-3v-1h1c2.757,0,5-2.243,5-5V24C63,21.243,60.757,19,58,19z M47,3c0.552,0,1,0.449,1,1s-0.448,1-1,1   s-1-0.449-1-1S46.448,3,47,3z M17,5c-0.552,0-1-0.449-1-1s0.448-1,1-1s1,0.449,1,1S17.552,5,17,5z M55,60c0,0.551-0.448,1-1,1H10   c-0.552,0-1-0.449-1-1v-1h46V60z M61,54c0,1.654-1.346,3-3,3H6c-1.654,0-3-1.346-3-3V24c0-1.654,1.346-3,3-3h52   c1.654,0,3,1.346,3,3V54z">
+                    </path>
+                    <path
+                      d="M23,27c-6.617,0-12,5.383-12,12s5.383,12,12,12s12-5.383,12-12S29.617,27,23,27z M31.616,33.949   C31.49,33.968,31.364,34,31.236,34c-1.76,0-3.343,0.978-4.131,2.553C26.659,37.445,25.762,38,24.764,38H21c-0.552,0-1-0.449-1-1   c0-0.313,0.149-0.612,0.399-0.8l1.335-1C23.153,34.135,24,32.44,24,30.667c0-0.546,0.122-1.077,0.353-1.564   C27.449,29.524,30.094,31.364,31.616,33.949z M22.241,29.038C22.084,29.563,22,30.109,22,30.667c0,1.148-0.548,2.245-1.466,2.933   l-1.335,1.001C18.448,35.165,18,36.062,18,37c0,1.654,1.346,3,3,3h3.764c1.76,0,3.343-0.978,4.131-2.553   C29.341,36.555,30.238,36,31.236,36c0.42,0,0.833-0.062,1.238-0.176C32.81,36.823,33,37.889,33,39c0,0.356-0.02,0.707-0.057,1.053   C32.738,40.027,32.533,40,32.333,40c-1.773,0-3.469,0.847-4.533,2.267l-0.44,0.588C26.821,43.572,25.965,44,25.068,44   c-0.96,0-1.852-0.477-2.384-1.275C21.966,41.645,20.761,41,19.463,41h-0.762c-1.795,0-3.556,0.569-5.019,1.602   C13.248,41.483,13,40.271,13,39C13,33.742,17.082,29.429,22.241,29.038z M23,49c-3.52,0-6.615-1.833-8.397-4.59   c1.17-0.906,2.618-1.41,4.099-1.41h0.762c0.628,0,1.21,0.312,1.558,0.834C21.925,45.19,23.438,46,25.068,46   c1.522,0,2.978-0.728,3.891-1.946l0.44-0.587C30.089,42.548,31.186,42,32.333,42c0.065,0,0.133,0.014,0.199,0.018   C31.249,46.061,27.462,49,23,49z">
+                    </path>
+                  </g>
+                </svg>
+
+
+              </span>
+              <h3 class="u-text u-text-default u-text-5">Television</h3>
+              <div class="switch u-align-center u-clearfix u-custom-html u-custom-html-2">
+                <label class="switch">
+                  <input type="checkbox" checked="" id="TV_switch" onchange="updateButton(this)">
+                  <span class="round slider"></span>
+                </label>
+              </div>
+              <p class="u-text u-text-6" id="TV_switch_status">On</p>
+            </div>
+          </div>
+          <div
+            class="u-radius-25 u-align-center u-container-style u-list-item u-repeater-item u-shape-rectangle u-list-item-3">
+            <div class="u-container-layout u-similar-container u-container-layout-3"><span
+                class="u-icon u-icon-circle u-icon-3"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice"
+                  viewBox="0 0 455 455">
+                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-c173"></use>
+                </svg><svg class="u-svg-content" viewBox="0 0 455 455" id="svg-c173">
+                  <g>
+                    <path
+                      d="m425.17,67.167h-395.34c-16.448,0-29.83,13.382-29.83,29.83v152.67c0,4.142 3.357,7.5 7.5,7.5h440c4.143,0 7.5-3.358 7.5-7.5v-152.67c0-16.448-13.382-29.83-29.83-29.83zm-392.67,15h390v9.51c0,4.957-4.033,8.99-8.99,8.99h-372.02c-4.957,0-8.99-4.033-8.99-8.99v-9.51zm390,122.5h-390v-1.01c0-4.957 4.033-8.99 8.99-8.99h372.02c4.957,0 8.99,4.033 8.99,8.99v1.01zm-390,10h390v10h-390v-10zm0,20h390v7.5h-390v-7.5zm407.5,7.5h-7.5v-38.51c0-10.471-8.519-18.99-18.99-18.99h-372.02c-10.472,0-18.99,8.519-18.99,18.99v38.51h-7.5v-145.17c0-5.51 3.027-10.319 7.5-12.875v7.555c0,10.471 8.519,18.99 18.99,18.99h372.02c10.472,0 18.99-8.519 18.99-18.99v-7.555c4.473,2.556 7.5,7.365 7.5,12.875v145.17z">
+                    </path>
+                    <path d="m250.5,164.667h-46c-2.762,0-5,2.239-5,5s2.238,5 5,5h46c2.762,0 5-2.239 5-5s-2.238-5-5-5z">
+                    </path>
+                    <path
+                      d="m401.503,164.668c-1.32,0-2.61,0.53-3.54,1.46s-1.46,2.22-1.46,3.54 0.53,2.61 1.46,3.53c0.93,0.94 2.22,1.47 3.54,1.47 1.31,0 2.6-0.53 3.53-1.47 0.93-0.93 1.47-2.22 1.47-3.53s-0.54-2.6-1.47-3.54c-0.93-0.93-2.22-1.46-3.53-1.46z">
+                    </path>
+                    <path
+                      d="m378.503,164.668c-1.32,0-2.61,0.53-3.54,1.46s-1.46,2.22-1.46,3.54 0.53,2.6 1.46,3.53c0.93,0.93 2.22,1.47 3.54,1.47 1.31,0 2.6-0.54 3.53-1.47 0.93-0.93 1.47-2.22 1.47-3.53 0-1.32-0.54-2.61-1.47-3.54-0.93-0.93-2.22-1.46-3.53-1.46z">
+                    </path>
+                    <path
+                      d="m186.319,289.942c1.351-2.409 0.493-5.456-1.916-6.807-2.407-1.352-5.456-0.493-6.807,1.915-9.09,16.21-9.091,36.35-0.001,52.561 7.396,13.192 7.396,29.583 0,42.776-1.351,2.409-0.492,5.456 1.916,6.807 0.773,0.434 1.612,0.64 2.44,0.64 1.75,0 3.449-0.92 4.366-2.556 9.088-16.209 9.088-36.348 0-52.557-7.397-13.195-7.396-29.586 0.002-42.779z">
+                    </path>
+                    <path
+                      d="m231.862,289.942c1.351-2.409 0.493-5.456-1.916-6.807-2.407-1.352-5.456-0.493-6.807,1.915-9.09,16.21-9.091,36.35-0.001,52.561 7.396,13.192 7.396,29.583 0,42.776-1.351,2.409-0.492,5.456 1.916,6.807 0.773,0.434 1.612,0.64 2.44,0.64 1.75,0 3.449-0.92 4.366-2.556 9.088-16.209 9.088-36.348 0-52.557-7.397-13.195-7.396-29.586 0.002-42.779z">
+                    </path>
+                    <path
+                      d="m277.406,289.942c1.351-2.409 0.493-5.456-1.916-6.807-2.408-1.352-5.456-0.493-6.807,1.915-9.091,16.21-9.091,36.35-0.002,52.561 7.397,13.193 7.397,29.583 0,42.776-1.351,2.408-0.493,5.456 1.916,6.807 0.773,0.434 1.612,0.64 2.44,0.64 1.75,0 3.449-0.92 4.366-2.556 9.089-16.209 9.089-36.348 0-52.557-7.396-13.194-7.396-29.586 0.003-42.779z">
+                    </path>
+                  </g>
+                </svg>
+
+
+              </span>
+              <h3 class="u-text u-text-default u-text-7">Air Conditioner</h3>
+              <div class="switch u-align-center u-clearfix u-custom-html u-custom-html-3">
+                <label class="switch">
+                  <input type="checkbox" checked="" id="AC_switch" onchange="updateButton(this)">
+                  <span class="round slider"></span>
+                </label>
+              </div>
+              <p class="u-text u-text-8" id="AC_switch_status">On</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="u-align-center u-clearfix u-section-2" id="sec-fdf9">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <h2 class="u-text u-text-default u-text-1">Schedule</h2>
+      <p class="u-text u-text-2">Set your schedule here.</p>
+      <div class="u-expanded-width u-table u-table-responsive u-table-1">
+        <!--TABEL KEDUAAAAAAA-->
+        <div id="cont"></div> <!-- the container to add the TABLE -->
+        <p align-text="center" class="u-align-center">
+          <input type="button" id="addRow" value="+" onclick="addRow()"
+            class="u-align-center u-btn u-btn-round u-button-style u-palette-1-base u-radius-50 u-btn-1" />
+        </p>
+
+        <p>
+          <input type="button" id="bt" value="Submit Data" onclick="submit()" />
+        </p>
+
+        <p id='output'></p>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-6ef7">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <p class="u-small-text u-text u-text-variant u-text-1">SmolCube Console<br>Copyright Capstone Design Team 1
+      </p>
+    </div>
+  </footer>
+</body>
+
+
+
+<script>
+  var arrHead = new Array();	// array for header.
+  arrHead = ['SWITCH', 'DEVICE', 'TIME', 'REMOVE'];
+
+  // first create TABLE structure with the headers. 
+  function createTable() {
+    var empTable = document.createElement('table');
+    empTable.setAttribute('id', 'empTable'); // table id.
+    empTable.setAttribute('class', 'u-align-center')
+
+    var tr = empTable.insertRow(-1);
+    for (var h = 0; h < arrHead.length; h++) {
+      var th = document.createElement('th'); // create table headers
+      th.innerHTML = arrHead[h];
+      th.setAttribute('class', 'u-border-1 u-border-palette-5-light-1 u-table-cell u-table-cell-2')
+      tr.appendChild(th);
+      tr.setAttribute('class', 'u-align-center u-table-header u-table-header-1')
+    }
+
+    var div = document.getElementById('cont');
+    div.appendChild(empTable);  // add the TABLE to the container.
+  }
+
+  // now, add a new to the TABLE.
+  function addRow() {
+    var empTab = document.getElementById('empTable');
+
+    var rowCnt = empTab.rows.length;   // table row count.
+    var tr = empTab.insertRow(rowCnt); // the table row.
+    tr = empTab.insertRow(rowCnt);
+
+    for (var c = 0; c < arrHead.length; c++) {
+      var td = document.createElement('td'); // table definition.
+      td = tr.insertCell(c);
+      td.setAttribute('class', 'u-align-center');
+
+      if (c == 3) {      // the first column.
+        // add a button in every new row in the first column.
+        var button = document.createElement('input');
+
+        // set input attributes.
+        button.setAttribute('type', 'button');
+        button.setAttribute('value', 'Remove');
+        button.setAttribute('class', 'u-btn u-btn-round u-button-style u-palette-2-base u-radius-50 u-btn-1');
+
+        // add button's 'onclick' event.
+        button.setAttribute('onclick', 'removeRow(this)');
+
+        td.appendChild(button);
+      }
+      else if (c == 1) {
+        // <form name="form1" id="form1" action="/action_page.php">
+        //       <select name="subject" id="subject">
+        //         <option value="" selected="selected">Television</option>
+        //         <option value="">AC | SONY</option>
+        //         <option value="">AC | PANASONIC</option>
+        //       </select>
+        //     </form>
+        var selectorDevice = document.createElement('form');
+        selectorDevice.setAttribute('action', 'action="/action_page.php"')
+        var select_selectorDevice = document.createElement('select');
+
+        var deviceList = new Array();	// array for header.
+        deviceList = ['Television', 'AC | SONY', 'AC | PANASONIC', 'AC | SHARP'];
+        for (var z = 0; z < deviceList.length; z++) {
+          var option_select_selectorDevice = document.createElement('option');
+          option_select_selectorDevice.setAttribute('value', 'AD876');
+          if (z == 0) option_select_selectorDevice.setAttribute('selected', 'selected');
+          // option_select_selectorDevice.innerHTML = 'Television';
+          option_select_selectorDevice.innerHTML = deviceList[z];
+          select_selectorDevice.appendChild(option_select_selectorDevice);
+        }
+        selectorDevice.appendChild(select_selectorDevice);
+        td.appendChild(selectorDevice);
+
+      }
+      else if (c == 0) {
+        var switchSpan = document.createElement('label');
+        switchSpan.setAttribute('class', 'switch');
+        switchSpan.setAttribute('type', 'button');
+        // switchSpan.innerHTML = "<label class=\"switch\">"
+        // switchSpan.innerHTML += "<input type=\"checkbox\" >"
+        // switchSpan.innerHTML += "<span class=\"round slider\"></span>"
+        var slider_custom = document.createElement('input');
+        slider_custom.setAttribute('type', 'checkbox');
+        var spanner = document.createElement('span');
+        spanner.setAttribute('class', 'round slider');
+        switchSpan.appendChild(slider_custom);
+        switchSpan.appendChild(spanner);
+        // switchSpan.innerHTML += "</label>";
+        var li = document.createElement('li');
+        td.appendChild(switchSpan);
+      }
+      else if (c == 2) {
+        // <input type="time" value="10:30:00" id="appt" name="appt"></input>
+        // 2nd, 3rd and 4th column, will have textbox.
+        var timePicker = document.createElement('input');
+        timePicker.setAttribute('type', 'time');
+        timePicker.setAttribute('value', '10:30:00');
+
+        td.appendChild(timePicker);
+      }
+      else {
+        // 2nd, 3rd and 4th column, will have textbox.
+        var ele = document.createElement('input');
+        ele.setAttribute('type', 'text');
+        ele.setAttribute('value', '');
+
+        td.appendChild(ele);
+      }
+    }
+  }
+
+  // delete TABLE row function.
+  function removeRow(oButton) {
+    var empTab = document.getElementById('empTable');
+    empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); // button -> td -> tr.
+  }
+
+  // function to extract and submit table data.
+  function submit() {
+    var myTab = document.getElementById('empTable');
+    var toogle_bulb = document.getElementById('bulb_switch');
+    var toogle_TV = document.getElementById('TV_switch');
+    var toogle_AC = document.getElementById('AC_switch');
+
+    var arrValues = new Array();
+    arrValues.push("'" + toogle_bulb.checked + "'");
+    arrValues.push("'" + toogle_TV.checked + "'");
+    arrValues.push("'" + toogle_AC.checked + "'");
+    // loop through each row of the table.
+    for (row = 1; row < myTab.rows.length - 1; row++) {
+      // loop through each cell in a row.
+      for (c = 0; c < myTab.rows[row].cells.length; c++) {
+        var element = myTab.rows.item(row).cells[c];
+        if (element.childNodes[0].getAttribute('type') == 'text') {
+          arrValues.push("'" + element.childNodes[0].value + "'");
+          //alert('true');
+        }
+        //element.childNodes[0].getAttribute('type') == 'button'
+        else if (c == 0) {
+          // else if (element.childNodes[0].childNodes[0].getAttribute('type')=='checkbox'){
+          // alert(element.childNodes[0].childNodes[0].checked)
+          arrValues.push("'" + element.childNodes[0].childNodes[0].checked + "'");
+          // if (element.childNodes[0].checked == true){
+          //   arrValues.push("'" + 'true' + "'");
+          // }
+          // else{
+          //   alert('child :'+element.childNodes[0].checked);
+          //   arrValues.push("'" + element.childNodes[0].checked + "'");
+          // } 
+        }
+        else if (c == 1) {
+          arrValues.push("'" + element.childNodes[0].childNodes[0].value + "'");
+        }
+        else if (c == 2) {
+          arrValues.push("'" + element.childNodes[0].value + "'");
+        }
+        // else{
+        //   alert(element.childNodes[0].getAttribute('type'))
+        // }
+      }
+    }
+
+    // The final output.
+    document.getElementById('output').innerHTML = arrValues;
+    //console.log (arrValues);   // you can see the array values in your browsers console window. Thanks :-) 
+  }
+
+  function updateButton(selectedObject) {
+    var status_button = selectedObject.checked;
+    console.log(status_button);
+    // var pass_status = document.getElementById('bulb_switch_status');
+    var pass_status = document.getElementById(selectedObject.id + '_status');
+    console.log(pass_status);
+    if (status_button == true) {
+      console.log('status changed to : on');
+      pass_status.innerHTML = 'On';
+    }
+    else if (status_button == false) {
+      console.log('status changed to : off');
+      pass_status.innerHTML = 'Off';
+    }
+  }
+</script>
+
+</html>
