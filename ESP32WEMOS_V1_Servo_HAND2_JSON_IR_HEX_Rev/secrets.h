@@ -19,7 +19,7 @@
 #define THINGNAME "ESP32_Pertama"
 
 const char WIFI_SSID[] = "boom";
-const char WIFI_PASSWORD[] = "asdfghjk";
+const char WIFI_PASSWORD[] = "yourpassword";
 const char AWS_IOT_ENDPOINT[] = "a1r4i3aompbsvi-ats.iot.ap-southeast-1.amazonaws.com";
 
 // Amazon Root CA 1
